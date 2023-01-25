@@ -14,8 +14,8 @@ describe('findFirstActionAndIndex', () => {
   });
 
   it('should return CTRL+C and correct index', () => {
-    const input = 'The first[CTRL+V] [CTRL+C]';
-    const output = { copy: 18 };
+    const input = 'The first challenge[CTRL+C]';
+    const output = { copy: 19 };
     expect(findFirstActionAndIndex(input)).toStrictEqual(output);
   });
 });
