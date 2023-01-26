@@ -20,6 +20,11 @@ function findFirstCommandAndIndex(inputText) {
   return commandAndIndex;
 }
 
+const commands = {
+  copy: (text, index) => text.slice(0, index),
+};
+
 module.exports = {
   findFirstCommandAndIndex,
+  commands,
 };
