@@ -39,4 +39,12 @@ describe('Commands :', () => {
 
     expect(commands.copy(input, 9)).toStrictEqual(copiedText);
   });
+
+  it('Paste command should return new text pasted from the clipboard', () => {
+    const input = 'the first [CTRL+V]';
+    const clipboard = 'test';
+    const pastedText = 'the first test';
+
+    expect(commands.paste(input, clipboard)).toStrictEqual(pastedText);
+  });
 });
