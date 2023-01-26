@@ -24,4 +24,10 @@ describe('findFirstCommandAndIndex', () => {
     const output = ['paste', 19];
     expect(findFirstCommandAndIndex(input)).toStrictEqual(output);
   });
+
+  it("should return nothing if input doesn't have any copy-paste", () => {
+    const input = 'The first challenge';
+    const output = ['nothing', -1];
+    expect(findFirstCommandAndIndex(input)).toStrictEqual(output);
+  });
 });
