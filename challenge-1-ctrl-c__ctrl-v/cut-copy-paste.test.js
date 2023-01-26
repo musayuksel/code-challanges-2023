@@ -18,4 +18,10 @@ describe('findFirstCommandAndIndex', () => {
     const output = ['copy', 19];
     expect(findFirstCommandAndIndex(input)).toStrictEqual(output);
   });
+
+  it('should return CTRL+V and correct index', () => {
+    const input = 'The first challenge[CTRL+V]';
+    const output = ['paste', 19];
+    expect(findFirstCommandAndIndex(input)).toStrictEqual(output);
+  });
 });
