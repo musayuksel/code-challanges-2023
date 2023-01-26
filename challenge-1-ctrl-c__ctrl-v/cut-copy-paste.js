@@ -22,6 +22,7 @@ function findFirstCommandAndIndex(inputText) {
 
 const commands = {
   copy: (text, index) => text.slice(0, index),
+  paste: (text, clipboard) => text.replace('[CTRL+V]', clipboard),
 };
 
 module.exports = {
