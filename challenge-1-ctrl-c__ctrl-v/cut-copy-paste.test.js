@@ -1,4 +1,4 @@
-const { findFirstCommandAndIndex } = require('./cut-copy-paste');
+const { findFirstCommandAndIndex, commands } = require('./cut-copy-paste');
 
 describe('findFirstCommandAndIndex', () => {
   it('should return CTRL+C and correct index', () => {
@@ -29,5 +29,14 @@ describe('findFirstCommandAndIndex', () => {
     const input = 'The first challenge';
     const output = ['nothing', -1];
     expect(findFirstCommandAndIndex(input)).toStrictEqual(output);
+  });
+});
+
+describe('Commands :', () => {
+  it('Copy command should return the copied text', () => {
+    const input = 'the first[CTRL+C]';
+    const copiedText = 'the first';
+
+    expect(commands.copy(input, 9)).toStrictEqual(copiedText);
   });
 });
