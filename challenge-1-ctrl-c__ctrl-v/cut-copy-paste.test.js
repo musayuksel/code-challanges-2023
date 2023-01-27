@@ -1,6 +1,7 @@
 const {
   findFirstCommandAndIndex,
   isInputIncludesCopyPaste,
+  challenge,
 } = require('./cut-copy-paste');
 
 describe('findFirstCommandAndIndex', () => {

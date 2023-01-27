@@ -23,7 +23,12 @@ function findFirstCommandAndIndex(inputText) {
 const isInputIncludesCopyPaste = (input) =>
   input.includes('[CTRL+C]') || input.includes('[CTRL+V]');
 
+function challenge(input) {
+  return input;
+}
+
 module.exports = {
   findFirstCommandAndIndex,
   isInputIncludesCopyPaste,
+  challenge,
 };
