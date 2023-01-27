@@ -54,3 +54,10 @@ describe('isInputIncludesCopyPaste :', () => {
     expect(isInputIncludesCopyPaste(input)).toBe(false);
   });
 });
+
+describe('challenge : ', () => {
+  it('should return the same text if there is any copy paste', () => {
+    const input = 'This text should return exactly the same!';
+    expect(challenge(input)).toEqual(input);
+  });
+});
