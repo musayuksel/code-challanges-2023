@@ -4,6 +4,7 @@ const {
   challenge,
 } = require('./cut-copy-paste');
 
+// findFirstCommandAndIndex helper function
 describe('findFirstCommandAndIndex', () => {
   it('should return CTRL+C and correct index', () => {
     const input = 'The first[CTRL+C]';
@@ -36,6 +37,7 @@ describe('findFirstCommandAndIndex', () => {
   });
 });
 
+// isInputIncludesCopyPaste helper function
 describe('isInputIncludesCopyPaste :', () => {
   it('should return true if the input includes [CTR+C]', () => {
     const input = 'the first[CTRL+C]';
@@ -56,6 +58,7 @@ describe('isInputIncludesCopyPaste :', () => {
   });
 });
 
+// MAIN challenge function
 describe('challenge : ', () => {
   it('should return the same text if there is any copy paste', () => {
     const input = 'This text should return exactly the same!';
@@ -83,6 +86,13 @@ describe('challenge : ', () => {
   it('should repeat if there are multiple copy paste', () => {
     const input = 'first[CTRL+C] [CTRL+V] and second[CTRL+C] [CTRL+V]';
     const output = 'first first and second first first and second';
+    expect(challenge(input)).toEqual(output);
+  });
+
+  it('should NOT paste anything if the clipboard is empty', () => {
+    const input =
+      '[CTRL+V]the tall oak tree towers over the lush green meadow.';
+    const output = 'the tall oak tree towers over the lush green meadow.';
     expect(challenge(input)).toEqual(output);
   });
 });
