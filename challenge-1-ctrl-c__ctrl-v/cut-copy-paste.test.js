@@ -61,4 +61,22 @@ describe('challenge : ', () => {
     const input = 'This text should return exactly the same!';
     expect(challenge(input)).toEqual(input);
   });
+
+  it('should return the text without [CTRL+C] in text', () => {
+    const input = 'the first[CTRL+C]';
+    const output = 'the first';
+    expect(challenge(input)).toEqual(output);
+  });
+
+  it('should return the text with pasted text', () => {
+    const input = 'the first[CTRL+C] [CTRL+V]';
+    const output = 'the first the first';
+    expect(challenge(input)).toEqual(output);
+  });
+
+  it('should return the text with pasted text', () => {
+    const input = 'the first[CTRL+C] [CTRL+V]';
+    const output = 'the first the first';
+    expect(challenge(input)).toEqual(output);
+  });
 });
