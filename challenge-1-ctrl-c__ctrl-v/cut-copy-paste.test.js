@@ -1,4 +1,7 @@
-const { findFirstCommandAndIndex, commands } = require('./cut-copy-paste');
+const {
+  findFirstCommandAndIndex,
+  isInputIncludesCopyPaste,
+} = require('./cut-copy-paste');
 
 describe('findFirstCommandAndIndex', () => {
   it('should return CTRL+C and correct index', () => {
@@ -32,19 +35,10 @@ describe('findFirstCommandAndIndex', () => {
   });
 });
 
-describe('Commands :', () => {
-  it('Copy command should return the copied text', () => {
+describe('isInputIncludesCopyPaste :', () => {
+  it('should return true if the input includes [CTR+C]', () => {
     const input = 'the first[CTRL+C]';
-    const copiedText = 'the first';
 
-    expect(commands.copy(input, 9)).toStrictEqual(copiedText);
-  });
-
-  it('Paste command should return new text pasted from the clipboard', () => {
-    const input = 'the first [CTRL+V]';
-    const clipboard = 'test';
-    const pastedText = 'the first test';
-
-    expect(commands.paste(input, clipboard)).toStrictEqual(pastedText);
+    expect(isInputIncludesCopyPaste(input)).toBe(true);
   });
 });
