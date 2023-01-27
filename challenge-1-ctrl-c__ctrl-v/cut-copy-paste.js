@@ -20,12 +20,10 @@ function findFirstCommandAndIndex(inputText) {
   return commandAndIndex;
 }
 
-const commands = {
-  copy: (text, index) => text.slice(0, index),
-  paste: (text, clipboard) => text.replace('[CTRL+V]', clipboard),
-};
+const isInputIncludesCopyPaste = (input) =>
+  input.includes('[CTRL+C]') || input.includes('[CTRL+V]');
 
 module.exports = {
   findFirstCommandAndIndex,
-  commands,
+  isInputIncludesCopyPaste,
 };
