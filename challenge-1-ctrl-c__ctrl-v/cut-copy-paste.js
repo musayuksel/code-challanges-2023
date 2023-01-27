@@ -24,6 +24,19 @@ const isInputIncludesCopyPaste = (input) =>
   input.includes('[CTRL+C]') || input.includes('[CTRL+V]');
 
 function challenge(input) {
+  let clipboard = '';
+
+  while (isInputIncludesCopyPaste(input)) {
+    const [command, index] = findFirstCommandAndIndex(input);
+
+    if (command === 'copy') {
+      clipboard = input.slice(0, index);
+      input = input.replace('[CTRL+C]', '');
+    } else if (command === 'paste') {
+      input = input.replace('[CTRL+V]', clipboard);
+    }
+    console.log({ command, index, clipboard, input });
+  }
   return input;
 }
 
