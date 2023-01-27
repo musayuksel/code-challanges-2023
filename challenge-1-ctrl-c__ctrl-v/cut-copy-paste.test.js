@@ -41,4 +41,16 @@ describe('isInputIncludesCopyPaste :', () => {
 
     expect(isInputIncludesCopyPaste(input)).toBe(true);
   });
+
+  it('should return true if the input includes [CTR+V]', () => {
+    const input = 'the second command is [CTRL+V]';
+
+    expect(isInputIncludesCopyPaste(input)).toBe(true);
+  });
+
+  it("should return false if the input doesn't includes [CTR+C] or [CTR+V]", () => {
+    const input = 'There is any copy or paste command';
+
+    expect(isInputIncludesCopyPaste(input)).toBe(false);
+  });
 });
