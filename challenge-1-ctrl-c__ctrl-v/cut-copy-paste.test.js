@@ -79,4 +79,10 @@ describe('challenge : ', () => {
     const output = 'the first the first';
     expect(challenge(input)).toEqual(output);
   });
+
+  it('should repeat if there are multiple copy paste', () => {
+    const input = 'first[CTRL+C] [CTRL+V] and second[CTRL+C] [CTRL+V]';
+    const output = 'first first and second first first and second';
+    expect(challenge(input)).toEqual(output);
+  });
 });
