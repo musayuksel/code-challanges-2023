@@ -1,17 +1,13 @@
-function findFirstCommandAndIndex(inputText) {
-  const copyIndex =
-    inputText.indexOf('[CTRL+C]') > -1
-      ? inputText.indexOf('[CTRL+C]')
-      : Infinity;
-  const pasteIndex =
-    inputText.indexOf('[CTRL+V]') > -1
-      ? inputText.indexOf('[CTRL+V]')
-      : Infinity;
+function findIndexOfCommand(inputText, command) {
+  return inputText.indexOf(command) > -1
+    ? inputText.indexOf(command)
+    : Infinity;
+}
 
-  const cutIndex =
-    inputText.indexOf('[CTRL+X]') > -1
-      ? inputText.indexOf('[CTRL+X]')
-      : Infinity;
+function findFirstCommandAndIndex(inputText) {
+  const copyIndex = findIndexOfCommand(inputText, '[CTRL+C]');
+  const pasteIndex = findIndexOfCommand(inputText, '[CTRL+V]');
+  const cutIndex = findIndexOfCommand(inputText, '[CTRL+X]');
 
   const firstCommand = [
     { command: 'copy', index: copyIndex },
@@ -26,15 +22,6 @@ function findFirstCommandAndIndex(inputText) {
     commandAndIndex[0] = firstCommand.command;
     commandAndIndex[1] = firstCommand.index;
   }
-
-  //   if (copyIndex < pasteIndex) {
-  //     commandAndIndex[0] = 'copy';
-  //     commandAndIndex[1] = copyIndex;
-  //   } else if (pasteIndex < copyIndex) {
-  //     commandAndIndex[0] = 'paste';
-  //     commandAndIndex[1] = pasteIndex;
-  //   }
-
   return commandAndIndex;
 }
 
@@ -43,6 +30,7 @@ const isInputIncludesCopyPaste = (input) =>
   input.includes('[CTRL+V]') ||
   input.includes('[CTRL+X]');
 
+//MAIN FUNCTION
 function challenge(input) {
   let clipboard = '';
 
@@ -66,6 +54,7 @@ function challenge(input) {
 
 // challenge('the first[CTRL+X] [CTRL+V]');
 module.exports = {
+  findIndexOfCommand,
   findFirstCommandAndIndex,
   isInputIncludesCopyPaste,
   challenge,
