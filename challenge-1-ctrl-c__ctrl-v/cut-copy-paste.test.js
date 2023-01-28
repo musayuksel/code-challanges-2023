@@ -21,6 +21,11 @@ describe('findIndexOfCommand', () => {
     const input = 'The first[CTRL+X]';
     expect(findIndexOfCommand(input, '[CTRL+X]')).toBe(9);
   });
+
+  it('should return Infinity if there is any command ', () => {
+    const input = 'The first text without any command';
+    expect(findIndexOfCommand(input, '[CTRL+X]')).toBe(Infinity);
+  });
 });
 
 // findFirstCommandAndIndex helper function
