@@ -102,4 +102,11 @@ describe('challenge : ', () => {
     const output = 'the tall oak tree towers over the lush green meadow.';
     expect(challenge(input)).toEqual(output);
   });
+
+  //   CTRL+X
+  it('should cut and paste the text if there is [CTRL+X]', () => {
+    const input = 'the first[CTRL+X][CTRL+V]';
+    const output = 'the first';
+    expect(challenge(input)).toEqual(output);
+  });
 });
