@@ -21,7 +21,9 @@ function findFirstCommandAndIndex(inputText) {
 }
 
 const isInputIncludesCopyPaste = (input) =>
-  input.includes('[CTRL+C]') || input.includes('[CTRL+V]');
+  input.includes('[CTRL+C]') ||
+  input.includes('[CTRL+V]') ||
+  input.includes('[CTRL+X]');
 
 function challenge(input) {
   let clipboard = '';
