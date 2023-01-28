@@ -56,6 +56,13 @@ describe('isInputIncludesCopyPaste :', () => {
 
     expect(isInputIncludesCopyPaste(input)).toBe(false);
   });
+
+  // CTRL+X
+  it('should return true if the input includes [CTR+X]', () => {
+    const input = 'the second command is [CTRL+X]';
+
+    expect(isInputIncludesCopyPaste(input)).toBe(true);
+  });
 });
 
 // MAIN challenge function
