@@ -1,8 +1,27 @@
 const {
+  findIndexOfCommand,
   findFirstCommandAndIndex,
   isInputIncludesCopyPaste,
   challenge,
 } = require('./cut-copy-paste');
+
+// findIndexOfCommand helper function
+describe('findIndexOfCommand', () => {
+  it('should return index of CTRL+C ', () => {
+    const input = 'The first[CTRL+C]';
+    expect(findIndexOfCommand(input, '[CTRL+C]')).toBe(9);
+  });
+
+  it('should return index of CTRL+V ', () => {
+    const input = 'The first[CTRL+V]';
+    expect(findIndexOfCommand(input, '[CTRL+V]')).toBe(9);
+  });
+
+  it('should return index of CTRL+X ', () => {
+    const input = 'The first[CTRL+X]';
+    expect(findIndexOfCommand(input, '[CTRL+X]')).toBe(9);
+  });
+});
 
 // findFirstCommandAndIndex helper function
 describe('findFirstCommandAndIndex', () => {
