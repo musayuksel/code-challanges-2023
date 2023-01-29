@@ -2,23 +2,18 @@ const findIndexOfCommand = (inputText, command) =>
   inputText.indexOf(command) > -1 ? inputText.indexOf(command) : Infinity;
 
 function findFirstCommandAndIndex(inputText) {
-  const copyIndex = findIndexOfCommand(inputText, '[CTRL+C]');
-  const pasteIndex = findIndexOfCommand(inputText, '[CTRL+V]');
-  const cutIndex = findIndexOfCommand(inputText, '[CTRL+X]');
+  const commandsAndIndexes = [
+    { command: 'copy', index: findIndexOfCommand(inputText, '[CTRL+C]') },
+    { command: 'paste', index: findIndexOfCommand(inputText, '[CTRL+V]') },
+    { command: 'cut', index: findIndexOfCommand(inputText, '[CTRL+X]') },
+  ];
 
-  //find smallest command index
-  const firstCommand = [
-    { command: 'copy', index: copyIndex },
-    { command: 'paste', index: pasteIndex },
-    { command: 'cut', index: cutIndex },
-  ].sort((a, b) => a.index - b.index)[0];
-
-  const commandAndIndex = ['nothing', -1]; //default
-  if (firstCommand.index !== Infinity) {
-    commandAndIndex[0] = firstCommand.command;
-    commandAndIndex[1] = firstCommand.index;
-  }
-  return commandAndIndex;
+  //find FIRST command index
+  const { command, index } = commandsAndIndexes.sort(
+    (a, b) => a.index - b.index
+  )[0];
+  // return first command [command, index]=>[copy,9]
+  return index !== Infinity ? [command, index] : ['nothing', -1]; //default
 }
 
 const isInputIncludesCopyPaste = (input) =>
@@ -41,14 +36,13 @@ function challenge(input) {
     } else if (command === 'cut') {
       clipboard = input.slice(0, index); //copy first part of input in to clipboard
       input = input.slice(index); //cut it from input
-      input = input.replace('[CTRL+X]', ''); //delete command
+      input = input.replace('[CTRL+X]', '');
     }
-    console.log({ command, index, clipboard, input });
   }
   return input;
 }
 
-challenge('the first[CTRL+X] [CTRL+V]');
+// challenge('the first[CTRL+X] [CTRL+V]');
 module.exports = {
   findIndexOfCommand,
   findFirstCommandAndIndex,
