@@ -53,6 +53,11 @@ describe('findFirstCommandAndIndex', () => {
     const output = ['paste', 19];
     expect(findFirstCommandAndIndex(input)).toStrictEqual(output);
   });
+  it('should return CTRL+X and correct index', () => {
+    const input = 'The first challenge[CTRL+X]';
+    const output = ['cut', 19];
+    expect(findFirstCommandAndIndex(input)).toStrictEqual(output);
+  });
 
   it("should return nothing if input doesn't have any copy-paste", () => {
     const input = 'The first challenge';
