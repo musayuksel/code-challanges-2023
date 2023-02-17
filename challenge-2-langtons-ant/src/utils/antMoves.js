@@ -29,3 +29,10 @@ export const oneRight = (ant) => {
     currentDirection: 'R',
   };
 };
+
+export const antMoves = {
+  oneUp,
+  oneDown,
+  oneLeft,
+  oneRight,
+};
