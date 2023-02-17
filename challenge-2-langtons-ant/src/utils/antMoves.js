@@ -21,3 +21,11 @@ export const oneLeft = (ant) => {
     direction: 'L',
   };
 };
+
+export const oneRight = (ant) => {
+  const [currentRow, currentColumn] = ant.currentPosition;
+  return {
+    currentPosition: [currentRow, currentColumn + 1],
+    direction: 'R',
+  };
+};
