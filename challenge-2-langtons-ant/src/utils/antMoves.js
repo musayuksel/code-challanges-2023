@@ -10,7 +10,7 @@ export const oneDown = (ant) => {
   const [currentRow, currentColumn] = ant.currentPosition;
   return {
     currentPosition: [currentRow + 1, currentColumn],
-    currentDirection: 'D',
+    currentDirection: 'S',
   };
 };
 
@@ -18,7 +18,7 @@ export const oneLeft = (ant) => {
   const [currentRow, currentColumn] = ant.currentPosition;
   return {
     currentPosition: [currentRow, currentColumn - 1],
-    currentDirection: 'L',
+    currentDirection: 'W',
   };
 };
 
@@ -26,7 +26,7 @@ export const oneRight = (ant) => {
   const [currentRow, currentColumn] = ant.currentPosition;
   return {
     currentPosition: [currentRow, currentColumn + 1],
-    currentDirection: 'R',
+    currentDirection: 'E',
   };
 };
 

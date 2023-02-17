@@ -20,7 +20,7 @@ describe('Utils functions :', () => {
       const antNextPosition = oneDown(MockAnt);
       const antNew = {
         currentPosition: [3, 1],
-        currentDirection: 'D',
+        currentDirection: 'S',
       };
       expect(antNextPosition).toEqual(antNew);
     });
@@ -29,7 +29,7 @@ describe('Utils functions :', () => {
       const antNextPosition = oneLeft(MockAnt);
       const antNew = {
         currentPosition: [2, 0],
-        currentDirection: 'L',
+        currentDirection: 'W',
       };
       expect(antNextPosition).toEqual(antNew);
     });
@@ -38,7 +38,7 @@ describe('Utils functions :', () => {
       const antNextPosition = oneRight(MockAnt);
       const antNew = {
         currentPosition: [2, 2],
-        currentDirection: 'R',
+        currentDirection: 'E',
       };
       expect(antNextPosition).toEqual(antNew);
     });
