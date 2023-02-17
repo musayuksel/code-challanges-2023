@@ -10,7 +10,7 @@ const board = [
 ];
 const ant = {
   currentPosition: [2, 1],
-  direction: 'N',
+  currentDirection: 'N',
 };
 
 describe('Utils functions :', () => {
@@ -18,7 +18,7 @@ describe('Utils functions :', () => {
     const antNextPosition = oneUp(ant);
     const antNew = {
       currentPosition: [1, 1],
-      direction: 'N',
+      currentDirection: 'N',
     };
     expect(antNextPosition).toEqual(antNew);
   });
@@ -27,7 +27,7 @@ describe('Utils functions :', () => {
     const antNextPosition = oneDown(ant);
     const antNew = {
       currentPosition: [3, 1],
-      direction: 'D',
+      currentDirection: 'D',
     };
     expect(antNextPosition).toEqual(antNew);
   });
@@ -36,7 +36,7 @@ describe('Utils functions :', () => {
     const antNextPosition = oneLeft(ant);
     const antNew = {
       currentPosition: [2, 0],
-      direction: 'L',
+      currentDirection: 'L',
     };
     expect(antNextPosition).toEqual(antNew);
   });
@@ -45,7 +45,7 @@ describe('Utils functions :', () => {
     const antNextPosition = oneRight(ant);
     const antNew = {
       currentPosition: [2, 2],
-      direction: 'R',
+      currentDirection: 'R',
     };
     expect(antNextPosition).toEqual(antNew);
   });
