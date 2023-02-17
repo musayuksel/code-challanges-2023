@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
-import { oneUp } from './utils/antMoves';
+import { oneDown, oneUp } from './utils/antMoves';
 
 const board = [
   [false, false, false, false],
@@ -19,6 +19,15 @@ describe('Utils functions :', () => {
     const antNew = {
       currentPosition: [1, 1],
       direction: 'N',
+    };
+    expect(antNextPosition).toEqual(antNew);
+  });
+
+  it('should find the oneDown index of ant', () => {
+    const antNextPosition = oneDown(ant);
+    const antNew = {
+      currentPosition: [3, 1],
+      direction: 'D',
     };
     expect(antNextPosition).toEqual(antNew);
   });
