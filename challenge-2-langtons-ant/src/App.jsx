@@ -20,7 +20,9 @@ function App() {
 
   return (
     <div style={boardStyles(4)} className='App'>
-      {board.map((row) => row.map((cell) => <Cell cell={cell} />))}
+      {board.map((row) =>
+        row.map((cell, index) => <Cell key={index} cell={cell} />)
+      )}
     </div>
   );
 }
