@@ -13,3 +13,11 @@ export const oneDown = (ant) => {
     direction: 'D',
   };
 };
+
+export const oneLeft = (ant) => {
+  const [currentRow, currentColumn] = ant.currentPosition;
+  return {
+    currentPosition: [currentRow, currentColumn - 1],
+    direction: 'L',
+  };
+};
