@@ -55,4 +55,14 @@ describe('findNextMovesOfAnt :', () => {
     };
     expect(antNewPosition).toEqual(antNextPosition);
   });
+
+  it('should move to oneDown if currentDirection is W and the cell is white', () => {
+    mockAnt.currentDirection = 'W';
+    const antNewPosition = findNextMovesOfAnt(mockAnt, !currentCellBlack);
+    const antNextPosition = {
+      currentPosition: [3, 1],
+      currentDirection: 'S',
+    };
+    expect(antNewPosition).toEqual(antNextPosition);
+  });
 });
