@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import Cell from './components/Cell';
+import { findNextMovesOfAnt } from './utils/findNextMovesOfAnt';
 
 function App() {
   const boardStyles = (boardWidth) => ({
@@ -17,6 +18,13 @@ function App() {
     [false, true, false, false],
     [false, false, false, false],
   ]);
+
+  const [currentAnt, setCurrentAnt] = useState({
+    currentPosition: [2, 1],
+    currentDirection: 'N',
+  });
+
+  const next = findNextMovesOfAnt(currentAnt, true);
 
   return (
     <div style={boardStyles(4)} className='App'>
