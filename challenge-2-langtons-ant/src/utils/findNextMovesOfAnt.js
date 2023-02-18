@@ -19,4 +19,9 @@ export const findNextMovesOfAnt = (ant, currentCell) => {
     (ant.currentDirection === 'W' && currentCell === false)
   )
     return antMoves['oneDown'](ant);
+  if (
+    (ant.currentDirection === 'E' && currentCell === false) ||
+    (ant.currentDirection === 'W' && currentCell === true)
+  )
+    return antMoves['oneUp'](ant);
 };
