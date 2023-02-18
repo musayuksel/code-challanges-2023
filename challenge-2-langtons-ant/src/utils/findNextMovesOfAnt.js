@@ -4,6 +4,14 @@
 // nextMove is oneRight
 import { antMoves } from './antMoves';
 export const findNextMovesOfAnt = (ant, currentCell) => {
-  if (ant.currentDirection === 'N' && currentCell === true)
+  if (
+    (ant.currentDirection === 'N' && currentCell === true) ||
+    (ant.currentDirection === 'S' && currentCell === false)
+  )
     return antMoves['oneRight'](ant);
+  if (
+    (ant.currentDirection === 'N' && currentCell === false) ||
+    (ant.currentDirection === 'S' && currentCell === true)
+  )
+    return antMoves['oneLeft'](ant);
 };
