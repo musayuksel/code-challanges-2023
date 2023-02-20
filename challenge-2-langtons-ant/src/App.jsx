@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Cell from './components/Cell';
 import { findNextMovesOfAnt } from './utils/findNextMovesOfAnt';
@@ -7,6 +7,7 @@ function App() {
   const boardStyles = (boardWidth) => ({
     display: 'grid',
     gridTemplateColumns: `repeat(${boardWidth}, 1fr)`,
+    gridTemplateRows: `repeat(${boardWidth}, 1fr)`,
     gridGap: '1px',
     border: '1px solid black',
     width: '500px',
@@ -24,12 +25,45 @@ function App() {
     currentDirection: 'N',
   });
 
-  const next = findNextMovesOfAnt(currentAnt, true);
+  useEffect(() => {
+    function moveOneStep() {
+      const [currentAntRow, currentAntCol] = currentAnt.currentPosition;
+      const nextMovesOfAnt = findNextMovesOfAnt(
+        currentAnt,
+        board[currentAntRow][currentAntCol]
+      );
+      setCurrentAnt(nextMovesOfAnt);
+      setBoard((prev) => {
+        return prev.map((boardRow, rowIndex) => {
+          return boardRow.map((boardCell, cellIndex) => {
+            if (rowIndex === currentAntRow && cellIndex === currentAntCol) {
+              console.log({ rowIndex, cellIndex });
+              return !boardCell;
+            }
+            return boardCell;
+          });
+        });
+      });
+    }
+    const callMoveStepsEveryOneSec = (time) => {
+      setTimeout(moveOneStep, time);
+    };
+    callMoveStepsEveryOneSec(1000);
+  }, [board, currentAnt]);
 
   return (
     <div style={boardStyles(4)} className='App'>
-      {board.map((row) =>
-        row.map((cell, index) => <Cell key={index} cell={cell} />)
+      {board.map((row, rowIndex) =>
+        row.map((cell, cellIndex) => (
+          <Cell
+            key={cellIndex}
+            currentAnt={
+              currentAnt.currentPosition.join('') ===
+                `${rowIndex}${cellIndex}` && currentAnt
+            }
+            cell={cell}
+          />
+        ))
       )}
     </div>
   );
