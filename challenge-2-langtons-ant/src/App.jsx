@@ -3,19 +3,11 @@ import Cell from './components/Cell';
 import { findNextMovesOfAnt } from './utils/findNextMovesOfAnt';
 import { boardStyles } from './styles/App.style';
 import { invertColourOfLeavingCell } from './utils/invertColourOfLeavingCell';
+import { initialAnt, initialBoard } from './utils/initialBoardAndAnt';
 
 function App() {
-  const [board, setBoard] = useState([
-    [false, false, false, false],
-    [false, false, false, false],
-    [false, true, false, false],
-    [false, false, false, false],
-  ]);
-
-  const [currentAnt, setCurrentAnt] = useState({
-    currentPosition: [2, 1],
-    currentDirection: 'N',
-  });
+  const [board, setBoard] = useState(initialBoard);
+  const [currentAnt, setCurrentAnt] = useState(initialAnt);
 
   useEffect(() => {
     function moveOneStep() {
@@ -26,8 +18,8 @@ function App() {
       );
       setCurrentAnt(nextMovesOfAnt);
 
-      setBoard((prev) =>
-        invertColourOfLeavingCell(prev, currentAntRow, currentAntCol)
+      setBoard((prevBoard) =>
+        invertColourOfLeavingCell(prevBoard, currentAntRow, currentAntCol)
       );
     }
     const callMoveStepsEveryOneSec = (time) => {
@@ -36,20 +28,22 @@ function App() {
     callMoveStepsEveryOneSec(1000);
   }, [board, currentAnt]);
 
+  const drawBoard = board.map((row, rowIndex) =>
+    row.map((cell, cellIndex) => (
+      <Cell
+        key={cellIndex}
+        currentAnt={
+          currentAnt.currentPosition.join('') === `${rowIndex}${cellIndex}` &&
+          currentAnt
+        }
+        cell={cell}
+      />
+    ))
+  );
+
   return (
     <div style={boardStyles(4)} className='App'>
-      {board.map((row, rowIndex) =>
-        row.map((cell, cellIndex) => (
-          <Cell
-            key={cellIndex}
-            currentAnt={
-              currentAnt.currentPosition.join('') ===
-                `${rowIndex}${cellIndex}` && currentAnt
-            }
-            cell={cell}
-          />
-        ))
-      )}
+      {drawBoard}
     </div>
   );
 }
