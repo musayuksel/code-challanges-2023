@@ -28,7 +28,6 @@ function App() {
         return prev.map((boardRow, rowIndex) => {
           return boardRow.map((boardCell, cellIndex) => {
             if (rowIndex === currentAntRow && cellIndex === currentAntCol) {
-              console.log({ rowIndex, cellIndex });
               return !boardCell;
             }
             return boardCell;
