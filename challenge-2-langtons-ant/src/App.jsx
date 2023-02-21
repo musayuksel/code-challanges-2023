@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Cell from './components/Cell';
 import { findNextMovesOfAnt } from './utils/findNextMovesOfAnt';
 import { boardStyles } from './styles/App.style';
+import { invertColourOfLeavingCell } from './utils/invertColourOfLeavingCell';
 
 function App() {
   const [board, setBoard] = useState([
@@ -24,16 +25,10 @@ function App() {
         board[currentAntRow][currentAntCol]
       );
       setCurrentAnt(nextMovesOfAnt);
-      setBoard((prev) => {
-        return prev.map((boardRow, rowIndex) => {
-          return boardRow.map((boardCell, cellIndex) => {
-            if (rowIndex === currentAntRow && cellIndex === currentAntCol) {
-              return !boardCell;
-            }
-            return boardCell;
-          });
-        });
-      });
+
+      setBoard((prev) =>
+        invertColourOfLeavingCell(prev, currentAntRow, currentAntCol)
+      );
     }
     const callMoveStepsEveryOneSec = (time) => {
       setTimeout(moveOneStep, time);
