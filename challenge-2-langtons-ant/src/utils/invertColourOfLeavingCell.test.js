@@ -4,6 +4,10 @@ const mockBoard = [
   [false, false],
   [false, true],
 ];
+const mockBoardWithBlack = [
+  [false, false],
+  [false, false],
+];
 const mockAnt = {
   currentPosition: [1, 1],
   currentDirection: 'N',
@@ -20,6 +24,19 @@ describe('invertColourOfLeavingCell :', () => {
     const expectedNewBoard = [
       [false, false],
       [false, false],
+    ];
+    expect(newBoard).toEqual(expectedNewBoard);
+  });
+
+  it('should convert the cell to white if the current one is black', () => {
+    const newBoard = invertColourOfLeavingCell(
+      mockBoardWithBlack,
+      currentAntRow,
+      currentAntCol
+    );
+    const expectedNewBoard = [
+      [false, false],
+      [false, true],
     ];
     expect(newBoard).toEqual(expectedNewBoard);
   });
