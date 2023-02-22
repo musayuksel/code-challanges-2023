@@ -3,12 +3,11 @@ export const invertColourOfLeavingCell = (
   currentAntRow,
   currentAntCol
 ) => {
-  return board.map((boardRow, rowIndex) => {
-    return boardRow.map((boardCell, cellIndex) => {
-      if (rowIndex === currentAntRow && cellIndex === currentAntCol) {
-        return !boardCell;
-      }
-      return boardCell;
-    });
-  });
+  return board.map((boardRow, rowIndex) =>
+    boardRow.map((boardCell, cellIndex) =>
+      rowIndex === currentAntRow && cellIndex === currentAntCol
+        ? !boardCell
+        : boardCell
+    )
+  );
 };
