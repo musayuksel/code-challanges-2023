@@ -5,23 +5,26 @@
 import { antMoves } from './antMoves';
 export const findNextMovesOfAnt = (ant, currentCell) => {
   if (
-    (ant.currentDirection === 'N' && currentCell === true) ||
-    (ant.currentDirection === 'S' && currentCell === false)
-  )
+    (ant.currentDirection === 'N' && currentCell) ||
+    (ant.currentDirection === 'S' && !currentCell)
+  ) {
     return antMoves['oneRight'](ant);
-  if (
-    (ant.currentDirection === 'N' && currentCell === false) ||
-    (ant.currentDirection === 'S' && currentCell === true)
-  )
+  } else if (
+    (ant.currentDirection === 'N' && !currentCell) ||
+    (ant.currentDirection === 'S' && currentCell)
+  ) {
     return antMoves['oneLeft'](ant);
+  }
   if (
-    (ant.currentDirection === 'E' && currentCell === true) ||
-    (ant.currentDirection === 'W' && currentCell === false)
-  )
+    (ant.currentDirection === 'E' && currentCell) ||
+    (ant.currentDirection === 'W' && !currentCell)
+  ) {
     return antMoves['oneDown'](ant);
+  }
   if (
-    (ant.currentDirection === 'E' && currentCell === false) ||
-    (ant.currentDirection === 'W' && currentCell === true)
-  )
+    (ant.currentDirection === 'E' && !currentCell) ||
+    (ant.currentDirection === 'W' && currentCell)
+  ) {
     return antMoves['oneUp'](ant);
+  }
 };
