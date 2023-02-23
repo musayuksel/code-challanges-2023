@@ -17,8 +17,8 @@ export default function Board({ speed }) {
         board[currentAntRow][currentAntCol]
       );
       setCurrentAnt(nextMovesOfAnt);
-      setBoard((prevBoard) =>
-        invertColourOfLeavingCell(prevBoard, currentAntRow, currentAntCol)
+      setBoard(() =>
+        invertColourOfLeavingCell(board, currentAntRow, currentAntCol)
       );
     }
     const callMoveStepsEveryOneSec = (time) => {
