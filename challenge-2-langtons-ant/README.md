@@ -1,4 +1,4 @@
-# Live demo => [here...](https://musa-minesweeper.netlify.app/) :star: :star: :star:
+# Live demo => [here...](https://musa-langtons-ant.vercel.app/) :star: :star: :star:
 
 # Challenge 2 - "Antics" :ant:
 
@@ -14,17 +14,9 @@ The task this week is to create a simulation of Langton's Ant. Langton's Ant is 
 
 ## Example:
 
-```
-
-```
+<img src="./langant.gif" width="400" height="400" />
 
 ### should return:
-
-```
-
-```
-
-## Handler function:
 
 ```
 
