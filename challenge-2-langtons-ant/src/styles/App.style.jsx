@@ -3,7 +3,7 @@ export const boardStyles = (boardWidth) => ({
   gridTemplateColumns: `repeat(${boardWidth}, 1fr)`,
   gridTemplateRows: `repeat(${boardWidth}, 1fr)`,
   gridGap: '1px',
-  border: '1px solid black',
-  width: '500px',
-  height: '500px',
+  border: '1px solid #efefef',
+  width: '90vw',
+  height: '90vw',
 });

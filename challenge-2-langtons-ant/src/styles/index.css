@@ -17,3 +17,25 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+}
+select.select-menu {
+  border: 1px solid #efefef;
+  cursor: pointer;
+  padding: 1rem 2rem;
+  outline: none;
+}
+
+.start-btn {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 1rem 2rem;
+  margin: 0 1rem;
+}

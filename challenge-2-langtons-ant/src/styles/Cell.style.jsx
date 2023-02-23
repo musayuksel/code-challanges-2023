@@ -1,6 +1,6 @@
 export const cellStyle = (cell) => ({
   backgroundColor: `${cell ? 'black' : 'white'}`,
-  border: '1px solid black',
+  border: '1px solid #aaa',
   color: `${cell ? 'white' : 'black'}`,
   display: 'flex',
   justifyContent: 'center',
