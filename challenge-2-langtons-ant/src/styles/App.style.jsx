@@ -4,6 +4,8 @@ export const boardStyles = (boardWidth) => ({
   gridTemplateRows: `repeat(${boardWidth}, 1fr)`,
   gridGap: '1px',
   border: '1px solid #efefef',
-  width: '90vw',
   height: '90vw',
+  maxWidth: '750px',
+  maxHeight: '750px',
+  width: '90vw',
 });
