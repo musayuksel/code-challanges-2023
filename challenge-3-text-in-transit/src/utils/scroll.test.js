@@ -45,4 +45,27 @@ describe("scroll function", () => {
 
     expect(scroll(text, 10)).toEqual(expectedTexts);
   });
+
+  it("should handle scroll if the screen is very big ", () => {
+    const text = "Yes";
+    const screenWidth = 10;
+    const expectedTexts = [
+      "          ",
+      "         Y",
+      "        Ye",
+      "       Yes",
+      "      Yes ",
+      "     Yes  ",
+      "    Yes   ",
+      "   Yes    ",
+      "  Yes     ",
+      " Yes      ",
+      "Yes       ",
+      "es        ",
+      "s         ",
+      "          ",
+    ];
+
+    expect(scroll(text, screenWidth)).toEqual(expectedTexts);
+  });
 });
