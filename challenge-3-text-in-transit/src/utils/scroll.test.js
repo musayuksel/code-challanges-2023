@@ -46,7 +46,7 @@ describe("scroll function", () => {
     expect(scroll(text, 10)).toEqual(expectedTexts);
   });
 
-  it("should handle scroll if the screen is very big ", () => {
+  it("should handle scroll if the screen is very big", () => {
     const text = "Yes";
     const screenWidth = 10;
     const expectedTexts = [
@@ -69,7 +69,7 @@ describe("scroll function", () => {
     expect(scroll(text, screenWidth)).toEqual(expectedTexts);
   });
 
-  it("should handle scroll if the screen is very small ", () => {
+  it("should handle scroll if the screen is very small", () => {
     const text = "Looong";
     const screenWidth = 2;
     const expectedTexts = [
