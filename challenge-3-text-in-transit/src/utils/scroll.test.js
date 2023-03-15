@@ -68,4 +68,22 @@ describe("scroll function", () => {
 
     expect(scroll(text, screenWidth)).toEqual(expectedTexts);
   });
+
+  it("should handle scroll if the screen is very small ", () => {
+    const text = "Looong";
+    const screenWidth = 2;
+    const expectedTexts = [
+      "  ",
+      " L",
+      "Lo",
+      "oo",
+      "oo",
+      "on",
+      "ng",
+      "g ",
+      "  ",
+    ];
+
+    expect(scroll(text, screenWidth)).toEqual(expectedTexts);
+  });
 });
