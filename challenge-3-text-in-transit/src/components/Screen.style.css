@@ -1,0 +1,20 @@
+.scroll-screen {
+  background-color: #f00;
+  display: grid;
+  height: 3rem;
+  /* justify-content: center; */
+  align-items: stretch;
+  width: fit-content;
+  /* align-content: center; */
+  /* transition: max-height 600ms ease, opacity 200ms ease; */
+}
+.screen-box {
+  /* transition:  0.25s linear;
+   */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #000;
+  min-width: 2rem;
+  max-width: 3rem;
+}
