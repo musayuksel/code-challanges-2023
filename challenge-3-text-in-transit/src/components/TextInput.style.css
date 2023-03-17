@@ -1,0 +1,43 @@
+form {
+  display: grid;
+  grid-gap: 1rem;
+  align-items: center;
+}
+form label {
+  font-size: 0.75rem;
+}
+form input {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 0.25rem;
+}
+form *:focus {
+  outline: none;
+  border-color: #000;
+}
+form .form-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+  align-items: center;
+}
+
+form .form-section.text-input {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 100%;
+}
+form #text {
+  padding: 0.5rem;
+}
+
+form button {
+  background-color: #739fd0;
+  border: none;
+  border-radius: 0.25rem;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.5rem 2rem;
+  justify-self: center;
+}
