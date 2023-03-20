@@ -10,29 +10,27 @@ export const scroll = (text, screenWidth = 4) => {
   let index = 0;
 
   const styles = {
-    boldStartIndexes: [],
-    boldEndIndexes: [],
-    underlineStartIndexes: [],
-    underlineEndIndexes: [],
+    boldStartIndex: -1,
+    boldEndIndex: -1,
+    underlineStartIndex: -1,
+    underlineEndIndex: -1,
     colorStartIndexes: [],
     colorEndIndexes: [],
   };
   // "Welcome on board this service to [B]London[/B]. Please have [U]all[/U] tickets and passes ready for inspection. This service is expected to depart [C:#00FF00]on time[/C]"
 
-  while (text.includes("[B]")) {
-    const index = text.indexOf("[B]");
-    styles.boldStartIndexes.push(index);
+  if (text.includes("[B]")) {
+    styles.boldStartIndex = text.indexOf("[B]");
     text = text.replace("[B]", "");
-    const index2 = text.indexOf("[/B]");
-    styles.boldEndIndexes.push(index2 - 1);
+
+    styles.boldEndIndex = text.indexOf("[/B]") - 1;
     text = text.replace("[/B]", "");
   }
-  while (text.includes("[U]")) {
-    const index = text.indexOf("[U]");
-    styles.underlineStartIndexes.push(index);
+  if (text.includes("[U]")) {
+    styles.underlineStartIndex = text.indexOf("[U]");
     text = text.replace("[U]", "");
-    const index2 = text.indexOf("[/U]");
-    styles.underlineEndIndexes.push(index2 - 1);
+
+    styles.underlineEndIndex = text.indexOf("[/U]") - 1;
     text = text.replace("[/U]", "");
   }
 
@@ -43,15 +41,12 @@ export const scroll = (text, screenWidth = 4) => {
       underline: false,
       color: "",
     };
-    if (
-      index >= styles.boldStartIndexes[0] &&
-      index <= styles.boldEndIndexes[0]
-    ) {
+    if (index >= styles.boldStartIndex && index <= styles.boldEndIndex) {
       newLetter.bold = true;
     }
     if (
-      index >= styles.underlineStartIndexes[0] &&
-      index <= styles.underlineEndIndexes[0]
+      index >= styles.underlineStartIndex &&
+      index <= styles.underlineEndIndex
     ) {
       newLetter.underline = true;
     }
