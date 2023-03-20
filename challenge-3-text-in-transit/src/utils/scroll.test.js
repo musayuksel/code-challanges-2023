@@ -15,7 +15,11 @@ describe("scroll function", () => {
       "    ",
     ];
 
-    expect(scroll(text, 4)).toEqual(expectedTexts);
+    const resultLetters = scroll(text, 4).map((text) =>
+      text.map((letter) => letter.letter).join("")
+    );
+
+    expect(resultLetters).toEqual(expectedTexts);
   });
 
   it("should return texts for scroll for longer texts", () => {
@@ -42,8 +46,11 @@ describe("scroll function", () => {
       "k         ",
       "          ",
     ];
+    const resultLetters = scroll(text, 10).map((text) =>
+      text.map((letter) => letter.letter).join("")
+    );
 
-    expect(scroll(text, 10)).toEqual(expectedTexts);
+    expect(resultLetters).toEqual(expectedTexts);
   });
 
   it("should handle scroll if the screen is very big", () => {
@@ -66,7 +73,10 @@ describe("scroll function", () => {
       "          ",
     ];
 
-    expect(scroll(text, screenWidth)).toEqual(expectedTexts);
+    const resultLetters = scroll(text, screenWidth).map((text) =>
+      text.map((letter) => letter.letter).join("")
+    );
+    expect(resultLetters).toEqual(expectedTexts);
   });
 
   it("should handle scroll if the screen is very small", () => {
@@ -83,7 +93,9 @@ describe("scroll function", () => {
       "g ",
       "  ",
     ];
-
-    expect(scroll(text, screenWidth)).toEqual(expectedTexts);
+    const resultLetters = scroll(text, screenWidth).map((text) =>
+      text.map((letter) => letter.letter).join("")
+    );
+    expect(resultLetters).toEqual(expectedTexts);
   });
 });
