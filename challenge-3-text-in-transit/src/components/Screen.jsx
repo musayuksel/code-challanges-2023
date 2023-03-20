@@ -13,21 +13,40 @@ export default function Screen({
       setCurrentTextIndex((prevIndex) =>
         prevIndex === textCharsForScreen.length - 1 ? 0 : prevIndex + 1
       );
-    }, 1000 / speed);
+    }, 10000 / speed);
     return () => clearInterval(interval);
   }, [textCharsForScreen, currentTextIndex, speed]);
 
-  const screenBoxes = useMemo(
-    () =>
-      Array.from({ length: screenWidth }, (_, i) => (
-        //   textCharsForScreen[currentTextIndex]?.split("").map((char, i) => (
-        <div key={i} className="screen-box">
-          {textCharsForScreen[currentTextIndex]?.charAt(i)}
-          {/* {char} */}
-        </div>
-      )),
-    [textCharsForScreen, currentTextIndex, screenWidth]
-  );
+  //   const screenBoxes = useMemo(
+  //     () =>
+  //       Array.from({ length: screenWidth }, (_, i) => (
+  //         //   textCharsForScreen[currentTextIndex]?.split("").map((char, i) => (
+  //         <div
+  //           key={i}
+  //           className="screen-box"
+  //           style={{ textDecoration: `underline` }}
+  //         >
+  //           {textCharsForScreen[currentTextIndex]?.[i]}
+  //           {/* {char} */}
+  //         </div>
+  //       )),
+  //     [textCharsForScreen, currentTextIndex, screenWidth]
+  //   );
+  const currentText = textCharsForScreen[currentTextIndex];
+  const screenBoxes = currentText?.map((letter, index) => (
+    <div
+      key={index}
+      className="screen-box"
+      style={{
+        textDecoration: `${letter.underline ? "underline" : ""}`,
+        fontWeight: `${letter.bold ? "bold" : ""}`,
+      }}
+    >
+      {letter.letter}
+    </div>
+  ));
+
+  console.log({ screenBoxes });
   return (
     <section
       className="scroll-screen"
