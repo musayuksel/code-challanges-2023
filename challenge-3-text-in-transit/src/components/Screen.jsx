@@ -11,11 +11,11 @@ export default function Screen({
     // update the text on the screen every 500ms
     const interval = setTimeout(() => {
       setCurrentTextIndex((prevIndex) =>
-        prevIndex === textCharsForScreen.length ? 0 : prevIndex + 1
+        prevIndex === textCharsForScreen.length - 1 ? 0 : prevIndex + 1
       );
     }, 1000 / speed);
     return () => clearInterval(interval);
-  }, [textCharsForScreen, currentTextIndex]);
+  }, [textCharsForScreen, currentTextIndex, speed]);
 
   const screenBoxes = useMemo(
     () =>
