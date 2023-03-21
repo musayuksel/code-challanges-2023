@@ -3,7 +3,7 @@ import "./Screen.style.css";
 
 export default function Screen({
   textCharsForScreen,
-  screenWidth = 10,
+  screenWidth = 20,
   speed = 1,
 }) {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);

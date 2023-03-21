@@ -5,8 +5,10 @@ export default function TextInput({
   setScreenWidth,
   setSpeed,
 }) {
-  const [currentTextInput, setCurrentTextInput] = useState("AND Digital");
-  const [currentScreenWidth, setCurrentScreenWidth] = useState(10);
+  const [currentTextInput, setCurrentTextInput] = useState(
+    "Welcome on board this service to [B]London[/B]. Please have [U]all[/U] tickets and passes ready for inspection. This service is expected to depart [C:#00FF00]on time[/C]"
+  );
+  const [currentScreenWidth, setCurrentScreenWidth] = useState(20);
   const [currentSpeed, setCurrentSpeed] = useState(1);
 
   const handleScrollClick = (e) => {
