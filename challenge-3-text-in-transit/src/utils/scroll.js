@@ -23,13 +23,15 @@ export const scroll = (text, screenWidth = 4) => {
 
   //get the index of the start and end of the style tags
   if (text.includes("[B]")) {
-    styles.boldStartIndex = text.indexOf("[B]");
-    styles.boldEndIndex = text.indexOf("[/B]") + 3;
+    const boldStyleIndexes = findStyleTags(text, "B");
+    styles.boldStartIndex = boldStyleIndexes[0];
+    styles.boldEndIndex = boldStyleIndexes[1];
   }
 
   if (text.includes("[U]")) {
-    styles.underlineStartIndex = text.indexOf("[U]");
-    styles.underlineEndIndex = text.indexOf("[/U]") + 3;
+    const underlineStyleIndexes = findStyleTags(text, "U");
+    styles.underlineStartIndex = underlineStyleIndexes[0];
+    styles.underlineEndIndex = underlineStyleIndexes[1];
   }
   if (text.includes("[C:")) {
     styles.color.startIndex = text.indexOf("[C:");
@@ -88,3 +90,9 @@ export const scroll = (text, screenWidth = 4) => {
 
   return result;
 };
+
+function findStyleTags(text, style) {
+  const styleStartIndex = text.indexOf(`[${style}]`);
+  const styleEndIndex = text.indexOf(`[/${style}]`) + 3;
+  return [styleStartIndex, styleEndIndex];
+}
