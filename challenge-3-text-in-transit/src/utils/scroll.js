@@ -14,26 +14,34 @@ export const scroll = (text, screenWidth = 4) => {
     boldEndIndex: -1,
     underlineStartIndex: -1,
     underlineEndIndex: -1,
-    colorStartIndexes: [],
-    colorEndIndexes: [],
+    color: {
+      startIndex: -1,
+      endIndex: -1,
+      color: "",
+    },
   };
-  // "Welcome on board this service to [B]London[/B]. Please have [U]all[/U] tickets and passes ready for inspection. This service is expected to depart [C:#00FF00]on time[/C]"
 
+  //get the index of the start and end of the style tags
   if (text.includes("[B]")) {
     styles.boldStartIndex = text.indexOf("[B]");
-    text = text.replace("[B]", "");
-
-    styles.boldEndIndex = text.indexOf("[/B]") - 1;
-    text = text.replace("[/B]", "");
+    styles.boldEndIndex = text.indexOf("[/B]") + 3;
   }
+
   if (text.includes("[U]")) {
     styles.underlineStartIndex = text.indexOf("[U]");
-    text = text.replace("[U]", "");
-
-    styles.underlineEndIndex = text.indexOf("[/U]") - 1;
-    text = text.replace("[/U]", "");
+    styles.underlineEndIndex = text.indexOf("[/U]") + 3;
+  }
+  if (text.includes("[C:")) {
+    styles.color.startIndex = text.indexOf("[C:");
+    const colorCode = text.slice(
+      styles.color.startIndex,
+      styles.color.startIndex + 11
+    );
+    styles.color.color = colorCode.slice(3, 10);
+    styles.color.endIndex = text.indexOf("[/C]") + 3;
   }
 
+  //create an array of objects with the letter, bold, underline, and color properties
   text.split("").forEach((letter, index) => {
     const newLetter = {
       letter: letter,
@@ -42,14 +50,33 @@ export const scroll = (text, screenWidth = 4) => {
       color: "",
     };
     if (index >= styles.boldStartIndex && index <= styles.boldEndIndex) {
+      if (index < styles.boldStartIndex + 3 || index > styles.boldEndIndex - 4)
+        //skip the style tags
+        return;
       newLetter.bold = true;
     }
     if (
       index >= styles.underlineStartIndex &&
       index <= styles.underlineEndIndex
     ) {
+      if (
+        index < styles.underlineStartIndex + 3 ||
+        index > styles.underlineEndIndex - 4
+      )
+        //skip the style tags
+        return;
       newLetter.underline = true;
     }
+    if (index >= styles.color.startIndex && index <= styles.color.endIndex) {
+      if (
+        index < styles.color.startIndex + 11 ||
+        index > styles.color.endIndex - 4
+      )
+        //skip the style tags
+        return;
+      newLetter.color = styles.color.color;
+    }
+
     textsForScroll.push(newLetter);
   });
 
