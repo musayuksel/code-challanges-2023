@@ -9,9 +9,82 @@ export const scroll = (text, screenWidth = 4) => {
   const textsForScroll = [];
   let index = 0;
 
-  while (index < text.length - screenWidth + 1) {
-    textsForScroll.push(text.slice(index, index + screenWidth));
+  const styles = {
+    boldStartIndex: -1,
+    boldEndIndex: -1,
+    underlineStartIndex: -1,
+    underlineEndIndex: -1,
+    color: {
+      startIndex: -1,
+      endIndex: -1,
+      color: "",
+    },
+  };
+
+  //get the index of the start and end of the style tags
+  if (text.includes("[B]")) {
+    styles.boldStartIndex = text.indexOf("[B]");
+    styles.boldEndIndex = text.indexOf("[/B]") + 3;
+  }
+
+  if (text.includes("[U]")) {
+    styles.underlineStartIndex = text.indexOf("[U]");
+    styles.underlineEndIndex = text.indexOf("[/U]") + 3;
+  }
+  if (text.includes("[C:")) {
+    styles.color.startIndex = text.indexOf("[C:");
+    const colorCode = text.slice(
+      styles.color.startIndex,
+      styles.color.startIndex + 11
+    );
+    styles.color.color = colorCode.slice(3, 10);
+    styles.color.endIndex = text.indexOf("[/C]") + 3;
+  }
+
+  //create an array of objects with the letter, bold, underline, and color properties
+  text.split("").forEach((letter, index) => {
+    const newLetter = {
+      letter: letter,
+      bold: false,
+      underline: false,
+      color: "",
+    };
+    if (index >= styles.boldStartIndex && index <= styles.boldEndIndex) {
+      if (index < styles.boldStartIndex + 3 || index > styles.boldEndIndex - 4)
+        //skip the style tags
+        return;
+      newLetter.bold = true;
+    }
+    if (
+      index >= styles.underlineStartIndex &&
+      index <= styles.underlineEndIndex
+    ) {
+      if (
+        index < styles.underlineStartIndex + 3 ||
+        index > styles.underlineEndIndex - 4
+      )
+        //skip the style tags
+        return;
+      newLetter.underline = true;
+    }
+    if (index >= styles.color.startIndex && index <= styles.color.endIndex) {
+      if (
+        index < styles.color.startIndex + 11 ||
+        index > styles.color.endIndex - 4
+      )
+        //skip the style tags
+        return;
+      newLetter.color = styles.color.color;
+    }
+
+    textsForScroll.push(newLetter);
+  });
+
+  const result = [];
+  while (index < textsForScroll.length - screenWidth + 1) {
+    result.push(textsForScroll.slice(index, index + screenWidth));
     index++;
   }
-  return textsForScroll;
+
+  return result;
 };

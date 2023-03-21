@@ -8,7 +8,7 @@ export default function Screen({
 }) {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   useEffect(() => {
-    // update the text on the screen every 500ms
+    // update the text on the screen every 1000ms as a default
     const interval = setTimeout(() => {
       setCurrentTextIndex((prevIndex) =>
         prevIndex === textCharsForScreen.length - 1 ? 0 : prevIndex + 1
@@ -17,24 +17,30 @@ export default function Screen({
     return () => clearInterval(interval);
   }, [textCharsForScreen, currentTextIndex, speed]);
 
+  const currentText = textCharsForScreen[currentTextIndex];
   const screenBoxes = useMemo(
     () =>
-      Array.from({ length: screenWidth }, (_, i) => (
-        //   textCharsForScreen[currentTextIndex]?.split("").map((char, i) => (
-        <div key={i} className="screen-box">
-          {textCharsForScreen[currentTextIndex]?.charAt(i)}
-          {/* {char} */}
+      currentText?.map((letter, index) => (
+        <div
+          key={index}
+          className="screen-box"
+          style={{
+            textDecoration: `${letter.underline ? "underline" : ""}`,
+            fontWeight: `${letter.bold ? "bold" : ""}`,
+            color: `${letter.color}`,
+          }}
+        >
+          {letter.letter}
         </div>
       )),
-    [textCharsForScreen, currentTextIndex, screenWidth]
+    [currentText]
   );
+
   return (
     <section
       className="scroll-screen"
       style={{ gridTemplateColumns: `repeat(${screenWidth},1fr)` }}
     >
-      {/* {textCharsForScreen[currentTextIndex]}
-       */}
       {screenBoxes}
     </section>
   );
