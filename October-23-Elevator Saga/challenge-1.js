@@ -1,17 +1,27 @@
 const challenge1 = {
   init: function (elevators, floors) {
-    var elevator = elevators[0]; // Let's use the first elevator
+    const elevator = elevators[0];
 
-    // Whenever the elevator is idle (has no more queued destinations) ...
-    elevator.on('idle', function () {
-      // let's go to all the floors (or did we forget one?)
-      elevator.goToFloor(0);
-      elevator.goToFloor(1);
-      elevator.goToFloor(2);
-      elevator.goToFloor(1);
-    });
+    // when a floor button is pressed, go to that floor
+    elevator.on('floor_button_pressed', (floorNum) =>
+      elevator.goToFloor(floorNum)
+    );
+
+    // when someone is waiting on a floor to go up, go to that floor
+    floors.forEach((floor) =>
+      floor.on('up_button_pressed', () => elevator.goToFloor(floor.floorNum()))
+    );
+
+    // when someone is waiting on a floor to go down, go to that floor
+    floors.forEach((floor) =>
+      floor.on('down_button_pressed', () =>
+        elevator.goToFloor(floor.floorNum())
+      )
+    );
   },
+
   update: function (dt, elevators, floors) {
     // We normally don't need to do anything here
   },
 };
+// Approximate time : ~ 53s
