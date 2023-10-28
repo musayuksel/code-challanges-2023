@@ -42,9 +42,7 @@ const challenge3 = {
     });
 
     function runElevator() {
-      console.log({ elevatorDirection });
-      elevator.goingUpIndicator(elevatorDirection === 'up');
-      elevator.goingDownIndicator(elevatorDirection === 'down');
+      setElevatorIndicator();
 
       if (elevatorDirection === 'up') {
         elevator.destinationQueue = [MAX_FLOOR];
@@ -53,6 +51,11 @@ const challenge3 = {
         elevator.destinationQueue = [0];
         elevator.checkDestinationQueue();
       }
+    }
+
+    function setElevatorIndicator() {
+      elevator.goingUpIndicator(elevatorDirection === 'up');
+      elevator.goingDownIndicator(elevatorDirection === 'down');
     }
 
     function changeDirection() {
