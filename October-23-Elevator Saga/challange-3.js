@@ -1,4 +1,4 @@
-const challenge3 = {
+{
   init: function (elevators, floors) {
     const MAX_FLOOR = floors.length - 1;
 
@@ -13,34 +13,27 @@ const challenge3 = {
         floorNum > elevator.currentFloor()
           ? addFloorToGoingUpQueue(floorNum)
           : addFloorToGoingDownQueue(floorNum);
-        if (elevatorDirection === 'stopped') {
-          changeDirection();
-        }
       }
     );
 
     floors.forEach((floor) => {
       // add waiting passengers to relevant queue
-      floor.on('down_button_pressed', () => {
-        addFloorToGoingDownQueue(floor.floorNum());
-        if (elevatorDirection === 'stopped') {
-          changeDirection();
-        }
-      });
+      floor.on('down_button_pressed', () =>
+        addFloorToGoingDownQueue(floor.floorNum())
+      );
 
-      floor.on('up_button_pressed', () => {
-        addFloorToGoingUpQueue(floor.floorNum());
-      });
+      floor.on('up_button_pressed', () =>
+        addFloorToGoingUpQueue(floor.floorNum())
+      );
     });
 
-    elevator.on('stopped_at_floor', (floorNum) => {
-      if (
+    elevator.on(
+      'stopped_at_floor',
+      (floorNum) =>
         (floorNum === MAX_FLOOR || floorNum === 0) &&
-        elevatorDirection !== 'stopped'
-      ) {
-        changeDirection();
-      }
-    });
+        elevatorDirection !== 'stopped' &&
+        changeDirection()
+    );
 
     elevator.on('passing_floor', (floorNum, direction) => {
       if (direction === 'up' && goingUpQueue.includes(floorNum)) {
@@ -57,10 +50,10 @@ const challenge3 = {
       setElevatorIndicator();
 
       if (elevatorDirection === 'up') {
-        elevator.destinationQueue = [MAX_FLOOR];
+        elevator.destinationQueue = [MAX_FLOOR]; //TODO: instead of MAX_FLOOR, use the highest floor in the queue
         elevator.checkDestinationQueue();
       } else if (elevatorDirection === 'down') {
-        elevator.destinationQueue = [0];
+        elevator.destinationQueue = [0]; // TODO: instead of 0, use the lowest floor in the queue
         elevator.checkDestinationQueue();
       }
     }
@@ -84,12 +77,18 @@ const challenge3 = {
         goingUpQueue.push(floorNumber);
         goingUpQueue.sort((a, b) => a - b); //[1234]
       }
+      if (elevatorDirection === 'stopped') {
+        changeDirection();
+      }
     }
 
     function addFloorToGoingDownQueue(floorNumber) {
       if (!goingDownQueue.includes(floorNumber)) {
         goingDownQueue.push(floorNumber);
         goingDownQueue.sort((a, b) => b - a); //[4321]
+      }
+      if (elevatorDirection === 'stopped') {
+        changeDirection();
       }
     }
   },
