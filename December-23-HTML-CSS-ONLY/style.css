@@ -14,6 +14,7 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 }
 
 .card-container {
@@ -115,6 +116,31 @@ main {
   }
   100% {
     filter: brightness(80%);
+  }
+}
+
+/* Snowflakes styles */
+.snowflake {
+  position: absolute;
+  color: #ef2a43;
+  font-size: 50px;
+  animation-name: snowfall;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.snowflake:nth-child(1) {
+  animation-duration: 5s;
+  left: 50%;
+  top: 0%;
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(600px);
   }
 }
 
