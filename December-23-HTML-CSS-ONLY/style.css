@@ -146,7 +146,7 @@ main {
   animation-delay: 0.3s;
   animation-duration: 5.5s;
   left: 20%;
-  top: 0%;
+  top: -5%;
 }
 
 .snowflake:nth-child(4) {
@@ -159,14 +159,14 @@ main {
   animation-delay: 1.3s;
   animation-duration: 6s;
   left: 40%;
-  top: 0%;
+  top: -10%;
 }
 
 .snowflake:nth-child(6) {
   animation-delay: 0.3s;
   animation-duration: 4s;
   left: 60%;
-  top: 0%;
+  top: -12%;
 }
 
 .snowflake:nth-child(7) {
