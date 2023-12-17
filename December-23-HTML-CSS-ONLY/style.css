@@ -118,9 +118,13 @@ main {
   }
 }
 
+footer {
+  display: flex;
+  justify-content: end;
+  margin: 3rem 1rem;
+}
 footer a {
-  position: fixed;
-  right: 0;
-  bottom: 20px;
+  font-size: 0.825rem;
   color: #efefef;
+  text-align: right;
 }
