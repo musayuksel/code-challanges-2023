@@ -122,7 +122,7 @@ main {
 /* Snowflakes styles */
 .snowflake {
   position: absolute;
-  color: #ef2a43;
+  color: #b3e6ff;
   font-size: 50px;
   animation-name: snowfall;
   animation-iteration-count: infinite;
