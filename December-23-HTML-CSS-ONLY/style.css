@@ -36,14 +36,33 @@ body {
 }
 
 .lightbulb {
-  background-color: red;
   width: 16px;
   height: 16px;
   border-radius: 50%;
   position: absolute;
-  top: 30%;
+  animation-name: light-change;
+  animation-iteration-count: infinite;
+}
+
+.lightbulb:nth-child(3) {
+  animation-duration: 1.2s;
+  background: radial-gradient(#ffffff, #ff0000);
   left: 45%;
-  animation: light-change 1.2s infinite;
+  top: 30%;
+}
+
+.lightbulb:nth-child(4) {
+  animation-duration: 1s;
+  background: radial-gradient(#ffffff, #bbb103e9);
+  left: 55%;
+  top: 40%;
+}
+
+.lightbulb:nth-child(5) {
+  animation-duration: 1s;
+  background: radial-gradient(#ffffff, #ff0000);
+  left: 40%;
+  top: 62%;
 }
 
 @keyframes light-change {
