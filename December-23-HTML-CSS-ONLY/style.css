@@ -20,6 +20,29 @@ body {
 }
 
 /* christmas tree styles */
-.christmas-tree .tree {
+.christmas-tree {
+  position: relative;
+}
+.tree {
   font-size: 216px;
+}
+
+.christmas-tree .star {
+  font-size: 2rem;
+  position: absolute;
+  top: 5%;
+  left: 47%;
+  animation: light-change 2s infinite;
+}
+
+@keyframes light-change {
+  0% {
+    filter: brightness(80%);
+  }
+  50% {
+    filter: brightness(110%);
+  }
+  100% {
+    filter: brightness(80%);
+  }
 }
