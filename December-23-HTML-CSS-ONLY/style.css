@@ -35,6 +35,17 @@ body {
   animation: light-change 2s infinite;
 }
 
+.lightbulb {
+  background-color: red;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  position: absolute;
+  top: 30%;
+  left: 45%;
+  animation: light-change 1.2s infinite;
+}
+
 @keyframes light-change {
   0% {
     filter: brightness(80%);
