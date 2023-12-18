@@ -9,7 +9,38 @@
 body {
   background-color: #ef2a43;
   font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem 0;
 }
+
+input[type='checkbox'] {
+  display: none;
+}
+
+label {
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* Hide the card-container initially */
+input[type='checkbox']:checked ~ label {
+  display: none;
+}
+main {
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.7s ease-in-out, transform 0.5s ease-in-out;
+}
+
+/* Show the card-container when the checkbox is checked */
+input[type='checkbox']:checked + main {
+  opacity: 1;
+  transform: scale(1);
+}
+
 main {
   display: flex;
   flex-direction: column;
