@@ -34,13 +34,21 @@ input[type='checkbox']:checked ~ label {
   display: none;
 }
 main {
+  display: none;
   opacity: 0;
   transform: scale(0);
-  transition: opacity 0.7s ease-in-out, transform 0.5s ease-in-out;
+  transition: all 0.7s ease-in-out, transform 0.5s ease-in-out 3s;
 }
-
+/* Hide count down initially */
+.count-down {
+  display: none;
+}
+/* Show the counter when the checkbox is checked */
+input[type='checkbox']:checked ~ .count-down {
+  display: block;
+}
 /* Show the card-container when the checkbox is checked */
-input[type='checkbox']:checked + main {
+input[type='checkbox']:checked ~ main {
   opacity: 1;
   transform: scale(1);
 }
@@ -73,6 +81,56 @@ main {
 .message-from {
   font-size: 0.825rem;
   color: #999;
+}
+
+/* countdown animation */
+@keyframes count-down {
+  0% {
+    transform: scale(3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+/* count down container */
+@keyframes count-down-container {
+  0% {
+    display: block;
+  }
+  100% {
+    display: none;
+  }
+}
+
+.count-down {
+  position: relative;
+  animation: count-down-container 3s;
+}
+
+.count-down p {
+  color: #fff;
+  position: absolute;
+  top: 300%;
+  left: 50%;
+  font-size: 16rem;
+  opacity: 0; /* Hide the numbers initially */
+}
+
+.count-down p:nth-child(1) {
+  animation: count-down 1s;
+  animation-delay: 0s;
+}
+
+.count-down p:nth-child(2) {
+  animation: count-down 1s;
+  animation-delay: 1s;
+}
+
+.count-down p:nth-child(3) {
+  animation: count-down 1s;
+  animation-delay: 2s;
 }
 
 /* christmas tree styles */
