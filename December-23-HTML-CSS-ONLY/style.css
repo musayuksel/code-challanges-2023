@@ -78,11 +78,13 @@ main {
 /* Hide count down initially */
 .count-down {
   display: none;
+  opacity: 0;
 }
 
 /* Show the counter when the checkbox is checked */
 input[type='checkbox']:checked ~ .count-down {
   display: block;
+  opacity: 1;
 }
 
 /* Show the card-container when the checkbox is checked */
