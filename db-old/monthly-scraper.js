@@ -26,10 +26,10 @@ try {
 } catch {
 	// Fallback to default config (for local testing)
 	CONFIG = {
-		startYear: 18,
-		maxYear: 18,
+		startYear: 19,
+		maxYear: 19,
 		maxConsecutiveSkips: 500,
-		startNumber: 46033
+		startNumber: 1
 	};
 	console.log('📋 Using default config');
 }
@@ -55,6 +55,10 @@ class MonthlyECHRScraper {
 		this.maxConsecutiveSkips = config.maxConsecutiveSkips || 100;
 		this.startNumber = config.startNumber || 1;
 		
+		// Batch configuration
+		this.BATCH_SIZE = 10; // Write every 10 successful cases
+		this.batchQueue = []; // Cases waiting to be written
+		
 		// Stats
 		this.stats = {
 			found: 0,
@@ -62,6 +66,37 @@ class MonthlyECHRScraper {
 			errors: 0,
 			totalChecked: 0
 		};
+}
+
+
+	/**
+	 * Write all queued cases to database
+	 */
+	async flushBatch() {
+		if (this.batchQueue.length === 0) {
+			return;
+		}
+		
+		log(`\n🚀 Writing batch of ${this.batchQueue.length} cases to D1...`, true);
+		log('='.repeat(60), true);
+		
+		let successCount = 0;
+		let errorCount = 0;
+		
+		for (const data of this.batchQueue) {
+			const saved = await this.d1.saveApplication(data);
+			if (saved) {
+				successCount++;
+			} else {
+				errorCount++;
+			}
+		}
+		
+		log(`\n✅ Batch complete: ${successCount} saved, ${errorCount} errors`, true);
+		log('='.repeat(60), true);
+		
+		// Clear the queue
+		this.batchQueue = [];
 	}
 
 	/**
@@ -92,13 +127,16 @@ class MonthlyECHRScraper {
 					const data = await scrapeECHRApplication(currentNumber, currentYear);
 
 					if (data) {
-						// Found - save to D1
-						const saved = await this.d1.saveApplication(data);
-						if (saved) {
-							this.stats.found++;
-							consecutiveSkips = 0; // Reset counter
-						} else {
-							this.stats.errors++;
+						// Found - add to batch queue instead of saving immediately
+						this.batchQueue.push(data);
+						this.stats.found++;
+						consecutiveSkips = 0; // Reset counter
+						
+						log(`   📦 Added to batch queue (${this.batchQueue.length}/${this.BATCH_SIZE})`, true);
+						
+						// Write batch if we hit the limit
+						if (this.batchQueue.length >= this.BATCH_SIZE) {
+							await this.flushBatch();
 						}
 					} else {
 						// Not found - increment skip counter
@@ -124,6 +162,8 @@ class MonthlyECHRScraper {
 				}
 			}
 
+			// Flush any remaining cases before moving to next year
+			await this.flushBatch();
 			// Move to next year
 			log(`\n⏭️  Max consecutive skips reached for year ${currentYear}`, true);
 			log(`   Moving to next year...\n`, true);
@@ -132,6 +172,8 @@ class MonthlyECHRScraper {
 			currentNumber = 1; // Reset to 1 for new year
 		}
 
+		// Flush any remaining cases at the end
+		await this.flushBatch();
 		this.printFinalStats();
 	}
 
@@ -184,7 +226,7 @@ async function main() {
 	log('\n⚠️  Press Ctrl+C to stop at any time\n', true);
 
 	// Wait 10 seconds so user can review config
-	await new Promise(resolve => setTimeout(resolve, 10000));
+	await new Promise(resolve => setTimeout(resolve, 5000));
 	
 	const scraper = new MonthlyECHRScraper(CONFIG);
 	await scraper.run();
