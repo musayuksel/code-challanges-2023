@@ -17,7 +17,7 @@
 // ============================================================
 // CONFIGURATION - Can be set via scraper-config.js or defaults
 // ============================================================
-
+require('dotenv').config();
 let CONFIG;
 try {
 	// Try to load config from file (GitHub Actions will create this)
@@ -29,7 +29,7 @@ try {
 		startYear: 19,
 		maxYear: 19,
 		maxConsecutiveSkips: 500,
-		startNumber: 1
+		startNumber: 37816
 	};
 	console.log('📋 Using default config');
 }
@@ -56,8 +56,9 @@ class MonthlyECHRScraper {
 		this.startNumber = config.startNumber || 1;
 		
 		// Batch configuration
-		this.BATCH_SIZE = 10; // Write every 10 successful cases
+		this.BATCH_ATTEMPTS = 10; // Write after every 100 scrape attempts
 		this.batchQueue = []; // Cases waiting to be written
+		this.attemptCounter = 0; // Count scrape attempts
 		
 		// Stats
 		this.stats = {
@@ -66,37 +67,29 @@ class MonthlyECHRScraper {
 			errors: 0,
 			totalChecked: 0
 		};
-}
+	}
 
 
 	/**
-	 * Write all queued cases to database
+	 * Write all queued cases to database using Import API
 	 */
 	async flushBatch() {
 		if (this.batchQueue.length === 0) {
+			log('\n   ℹ️  No cases to write in this batch', true);
 			return;
 		}
 		
 		log(`\n🚀 Writing batch of ${this.batchQueue.length} cases to D1...`, true);
 		log('='.repeat(60), true);
 		
-		let successCount = 0;
-		let errorCount = 0;
+		const result = await this.d1.saveBatch(this.batchQueue);
 		
-		for (const data of this.batchQueue) {
-			const saved = await this.d1.saveApplication(data);
-			if (saved) {
-				successCount++;
-			} else {
-				errorCount++;
-			}
-		}
-		
-		log(`\n✅ Batch complete: ${successCount} saved, ${errorCount} errors`, true);
+		log(`\n✅ Batch complete: ${result.success} saved, ${result.failed} errors`, true);
 		log('='.repeat(60), true);
 		
-		// Clear the queue
+		// Clear the queue and reset counter
 		this.batchQueue = [];
+		this.attemptCounter = 0;
 	}
 
 	/**
@@ -123,32 +116,41 @@ class MonthlyECHRScraper {
 				log(`\n[Check #${this.stats.totalChecked}] ${currentNumber}/${currentYear}`);
 
 				try {
+					// Increment attempt counter
+					this.attemptCounter++;
+					
 					// Scrape the case
 					const data = await scrapeECHRApplication(currentNumber, currentYear);
 
 					if (data) {
-						// Found - add to batch queue instead of saving immediately
+						// Found - add to batch queue
 						this.batchQueue.push(data);
 						this.stats.found++;
 						consecutiveSkips = 0; // Reset counter
 						
-						log(`   📦 Added to batch queue (${this.batchQueue.length}/${this.BATCH_SIZE})`, true);
-						
-						// Write batch if we hit the limit
-						if (this.batchQueue.length >= this.BATCH_SIZE) {
-							await this.flushBatch();
-						}
+						log(`   📦 Added to queue (${this.batchQueue.length} cases | ${this.attemptCounter}/100 attempts)`, true);
 					} else {
 						// Not found - increment skip counter
 						consecutiveSkips++;
 						this.stats.notFound++;
-						log(`   ⚠️  Consecutive skips: ${consecutiveSkips}/${this.maxConsecutiveSkips}`, true);
+						log(`   ⚠️  Skips: ${consecutiveSkips}/${this.maxConsecutiveSkips} | Attempts: ${this.attemptCounter}/100`, true);
+					}
+					
+					// Write batch after 100 attempts (regardless of success/failure)
+					if (this.attemptCounter >= this.BATCH_ATTEMPTS) {
+						await this.flushBatch();
 					}
 
 				} catch (error) {
 					log(`   ❌ Error: ${error.message}`, true);
 					this.stats.errors++;
 					consecutiveSkips++;
+					this.attemptCounter++;
+					
+					// Still check if we need to flush
+					if (this.attemptCounter >= this.BATCH_ATTEMPTS) {
+						await this.flushBatch();
+					}
 				}
 
 				currentNumber++;

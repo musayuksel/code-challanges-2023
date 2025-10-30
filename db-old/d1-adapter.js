@@ -1,17 +1,31 @@
 const { execSync } = require('child_process');
 const { log } = require('./debug');
+const { D1ImportAPI } = require('./d1-import-api');
 
 /**
  * Adapter to save scraped data to Cloudflare D1 using Wrangler CLI
  */
 class D1Adapter {
 	constructor(databaseName = 'echr-db') {
-    this.databaseName = databaseName;
-    // Representative cache: { name: id }
-    this.repCache = new Map();
-    this.cacheCounter = 0;
-    this.CACHE_FLUSH_INTERVAL = 10; // Flush cache every 10 cases
-}
+        this.databaseName = databaseName;
+        // Representative cache: { name: id }
+        this.repCache = new Map();
+        this.cacheCounter = 0;
+        this.CACHE_FLUSH_INTERVAL = 10; // Flush cache every 10 cases
+        
+        // Initialize D1 Import API if credentials available
+        const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+        const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+        const databaseId = '141a3109-a007-4ba6-8ead-bc9649276011';
+        
+        if (accountId && apiToken) {
+            this.importAPI = new D1ImportAPI(accountId, databaseId, apiToken);
+            log('✅ D1 Import API initialized (fast mode enabled)', true);
+        } else {
+            this.importAPI = null;
+            log('⚠️  D1 Import API not available - using Wrangler CLI (slower)', true);
+        }
+    }
 
     /**
      * Check if case should be marked as closed based on last event
@@ -36,7 +50,7 @@ class D1Adapter {
             log('   🔧 Executing SQL...');
             const result = execSync(command, { 
                 encoding: 'utf-8',
-                 cwd: process.cwd(), // Run from echr-app folder
+                cwd: process.cwd(), // Run from echr-app folder
                 env: {
                     ...process.env,
                     // Pass Cloudflare credentials from environment
@@ -262,6 +276,144 @@ class D1Adapter {
             log(`   ❌ Failed to save: ${error.message}`, true);
             return false;
         }
+    }
+
+    /**
+     * Build SQL for batch import (multiple cases at once)
+     */
+    buildBatchSQL(casesData) {
+        const sqlStatements = [];
+        
+        for (const data of casesData) {
+            try {
+                // 1. Find or create representative (still need this for ID)
+                let representativeId = null;
+                if (data.representant && data.representant.trim()) {
+                    // Check cache only (don't create during batch build)
+                    if (this.repCache.has(data.representant)) {
+                        representativeId = this.repCache.get(data.representant);
+                    }
+                    // If not cached, we'll handle it separately
+                }
+                
+                // 2. Convert dates
+                const dateIntroduction = this.convertDate(data.dateIntroduction);
+                const lastMajorEventDate = this.convertDate(data.lastMajorEventDate);
+                const country = this.extractCountry(data.applicationTitle);
+                const isClosed = this.isCaseClosed(data.lastMajorEvent);
+                
+                // 3. Escape function
+                const escapeSQL = (str) => str ? str.replace(/'/g, "''") : null;
+                
+                // 4. Build application INSERT
+                const appSQL = `
+                    INSERT INTO applications (
+                        application_number, application_title, country, date_introduction,
+                        representative_id, representative_name, last_major_event, last_major_event_date,
+                        is_closed, last_checked_date
+                    ) VALUES (
+                        '${data.applicationNumber}',
+                        '${escapeSQL(data.applicationTitle)}',
+                        ${country ? `'${escapeSQL(country)}'` : 'NULL'},
+                        '${dateIntroduction}',
+                        ${representativeId || 'NULL'},
+                        ${data.representant ? `'${escapeSQL(data.representant)}'` : 'NULL'},
+                        ${data.lastMajorEvent ? `'${escapeSQL(data.lastMajorEvent)}'` : 'NULL'},
+                        ${lastMajorEventDate ? `'${lastMajorEventDate}'` : 'NULL'},
+                        ${isClosed ? 1 : 0},
+                        DATE('now')
+                    )
+                    ON CONFLICT(application_number) DO UPDATE SET
+                        application_title = excluded.application_title,
+                        country = excluded.country,
+                        date_introduction = excluded.date_introduction,
+                        representative_id = excluded.representative_id,
+                        representative_name = excluded.representative_name,
+                        last_major_event = excluded.last_major_event,
+                        last_major_event_date = excluded.last_major_event_date,
+                        is_closed = excluded.is_closed,
+                        last_checked_date = DATE('now'),
+                        not_found_count = 0,
+                        updated_at = CURRENT_TIMESTAMP;`;
+                                
+                sqlStatements.push(appSQL);
+                
+                // 5. Build events DELETE + INSERT
+                const deleteSQL = `DELETE FROM events WHERE application_id = (SELECT id FROM applications WHERE application_number = '${data.applicationNumber}');`;
+                sqlStatements.push(deleteSQL);
+                
+                // 6. Build multi-row events INSERT
+                const eventValues = data.majorEventsList.map((event, i) => {
+                    const eventDate = this.convertDate(event.eventDate);
+                    const isLastEvent = (i === data.majorEventsList.length - 1) ? 1 : 0;
+                    return `((SELECT id FROM applications WHERE application_number = '${data.applicationNumber}'), '${eventDate}', '${escapeSQL(event.description)}', ${isLastEvent})`;
+                }).join(',\n                ');
+                
+                const eventsSQL = `INSERT INTO events (application_id, event_date, description, is_last_event) VALUES ${eventValues};`;
+                sqlStatements.push(eventsSQL);
+                
+            } catch (error) {
+                log(`   ⚠️  Skipping case ${data.applicationNumber} in batch: ${error.message}`, true);
+            }
+        }
+        
+        return sqlStatements.join('\n');
+    }
+
+
+    /**
+     * Save multiple cases at once using Import API
+     */
+    async saveBatch(casesData) {
+        if (!casesData || casesData.length === 0) {
+            return { success: 0, failed: 0 };
+        }
+        
+        log(`\n🚀 Batch saving ${casesData.length} cases...`, true);
+        
+        // If Import API available, use it (fast!)
+        if (this.importAPI) {
+            try {
+                // Pre-load all representatives into cache
+                for (const data of casesData) {
+                    if (data.representant && data.representant.trim()) {
+                        await this.findOrCreateRepresentative(data.representant);
+                    }
+                }
+                
+                // Build complete SQL
+                const batchSQL = this.buildBatchSQL(casesData);
+                
+                // Upload via Import API
+                await this.importAPI.uploadSQL(batchSQL);
+                
+                log(`   ✅ Batch complete: ${casesData.length} cases saved via Import API!`, true);
+                
+                // Flush cache
+                this.flushCacheIfNeeded();
+                
+                return { success: casesData.length, failed: 0 };
+            } catch (error) {
+                log(`   ❌ Batch import failed: ${error.message}`, true);
+                log('   🔄 Falling back to individual saves...', true);
+                // Fall through to individual saves
+            }
+        }
+        
+        // Fallback: Save individually (slower but reliable)
+        let successCount = 0;
+        let failCount = 0;
+        
+        for (const data of casesData) {
+            const saved = await this.saveApplication(data);
+            if (saved) {
+                successCount++;
+            } else {
+                failCount++;
+            }
+        }
+        
+        return { success: successCount, failed: failCount };
     }
 
 	/**
