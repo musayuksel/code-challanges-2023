@@ -36,7 +36,7 @@ class D1Adapter {
             log('   🔧 Executing SQL...');
             const result = execSync(command, { 
                 encoding: 'utf-8',
-                cwd: process.cwd() + '/../echr-app', // Run from echr-app folder
+                 cwd: process.cwd(), // Run from echr-app folder
                 env: {
                     ...process.env,
                     // Pass Cloudflare credentials from environment
