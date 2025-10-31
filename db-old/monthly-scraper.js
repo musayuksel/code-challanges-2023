@@ -56,7 +56,7 @@ class MonthlyECHRScraper {
 		this.startNumber = config.startNumber || 1;
 		
 		// Batch configuration
-		this.BATCH_ATTEMPTS = 50; // Write after every 100 scrape attempts
+		this.BATCH_ATTEMPTS = 100; // Write after every 100 scrape attempts
 		this.batchQueue = []; // Cases waiting to be written
 		this.attemptCounter = 0; // Count scrape attempts
 		
