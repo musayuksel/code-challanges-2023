@@ -11,7 +11,7 @@ class D1Adapter {
         // Representative cache: { name: id }
         this.repCache = new Map();
         this.cacheCounter = 0;
-        this.CACHE_FLUSH_INTERVAL = 50; // Flush cache every 10 cases
+        this.CACHE_FLUSH_INTERVAL = 100; // Flush cache every 10 cases
         
         // Initialize D1 Import API if credentials available
         const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
