@@ -1,0 +1,48 @@
+name: Weekly ECHR Scraper
+
+# Runs every Monday at 6:00 AM UTC
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 6am UTC
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120  # 2 hours max
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        working-directory: ./db-old
+        run: npm install
+      
+      - name: Install Playwright browsers
+        working-directory: ./db-old
+        run: npx playwright install chromium
+      
+      - name: Run weekly scraper
+        working-directory: ./db-old
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "🚀 Starting weekly scraper..."
+          echo "📅 Date: $(date)"
+          echo "⏰ Time: $(date -u)"
+          node weekly-scraper.js
+          echo "✅ Weekly scraper completed!"
+      
+      - name: Upload logs (if job fails)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-logs
+          path: db-old/*.log

@@ -56,7 +56,7 @@ class MonthlyECHRScraper {
 		this.startNumber = config.startNumber || 1;
 		
 		// Batch configuration
-		this.BATCH_ATTEMPTS = 150; // Write after every 100 scrape attempts
+		this.BATCH_ATTEMPTS = 250; // Write after every 100 scrape attempts
 		this.batchQueue = []; // Cases waiting to be written
 		this.attemptCounter = 0; // Count scrape attempts
 		
@@ -128,12 +128,12 @@ class MonthlyECHRScraper {
 						this.stats.found++;
 						consecutiveSkips = 0; // Reset counter
 						
-						log(`   📦 Added to queue (${this.batchQueue.length} cases | ${this.attemptCounter}/100 attempts)`, true);
+						log(`   📦 Added to queue (${this.batchQueue.length} cases | ${this.attemptCounter}/150 attempts)`, true);
 					} else {
 						// Not found - increment skip counter
 						consecutiveSkips++;
 						this.stats.notFound++;
-						log(`   ⚠️  Skips: ${consecutiveSkips}/${this.maxConsecutiveSkips} | Attempts: ${this.attemptCounter}/100`, true);
+						log(`   ⚠️  Skips: ${consecutiveSkips}/${this.maxConsecutiveSkips} | Attempts: ${this.attemptCounter}/150`, true);
 					}
 					
 					// Write batch after 100 attempts (regardless of success/failure)
