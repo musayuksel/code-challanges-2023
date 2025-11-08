@@ -362,7 +362,7 @@ class D1Adapter {
 
 
     /**
-     * Save multiple cases at once using Import API
+     * Save multiple cases at once using Import API (OPTIMIZED VERSION)
      */
     async saveBatch(casesData) {
         if (!casesData || casesData.length === 0) {
@@ -371,32 +371,22 @@ class D1Adapter {
         
         log(`\n🚀 Batch saving ${casesData.length} cases...`, true);
         
-        // If Import API available, use it (fast!)
+        // Use Import API (fast!)
         if (this.importAPI) {
             try {
-                // Pre-load all representatives into cache
-                for (const data of casesData) {
-                    if (data.representant && data.representant.trim()) {
-                        await this.findOrCreateRepresentative(data.representant);
-                    }
-                }
+                // Build complete SQL with representatives included
+                const batchSQL = this.buildBatchSQLWithReps(casesData);
                 
-                // Build complete SQL
-                const batchSQL = this.buildBatchSQL(casesData);
-                
-                // Upload via Import API
+                // Upload via Import API - ONE CALL DOES EVERYTHING!
                 await this.importAPI.uploadSQL(batchSQL);
                 
                 log(`   ✅ Batch complete: ${casesData.length} cases saved via Import API!`, true);
-                
-                // Flush cache
-                this.flushCacheIfNeeded();
                 
                 return { success: casesData.length, failed: 0 };
             } catch (error) {
                 log(`   ❌ Batch import failed: ${error.message}`, true);
                 log('   🔄 Falling back to individual saves...', true);
-                // Fall through to individual saves
+                // Fall through to individual saves as backup
             }
         }
         
@@ -414,6 +404,113 @@ class D1Adapter {
         }
         
         return { success: successCount, failed: failCount };
+    }
+
+    /**
+     * Build SQL for batch import INCLUDING representative handling
+     */
+    buildBatchSQLWithReps(casesData) {
+        const sqlStatements = [];
+        const escapeSQL = (str) => str ? str.replace(/'/g, "''") : null;
+        
+        // 1. First, handle ALL representatives at once
+        const uniqueReps = [...new Set(casesData
+            .map(d => d.representant)
+            .filter(r => r && r.trim()))];
+        
+        if (uniqueReps.length > 0) {
+            log(`   👥 Including ${uniqueReps.length} unique representatives in batch...`, true);
+            
+            // INSERT OR IGNORE creates only if doesn't exist
+            const repValues = uniqueReps
+                .map(name => `('${escapeSQL(name)}')`)
+                .join(',\n        ');
+            
+            sqlStatements.push(
+                `INSERT OR IGNORE INTO representatives (name) VALUES\n        ${repValues};`
+            );
+        }
+        
+        // 2. Build all application INSERTS/UPDATES
+        const appStatements = [];
+        const eventStatements = [];
+        
+        for (const data of casesData) {
+            try {
+                // Convert dates
+                const dateIntroduction = this.convertDate(data.dateIntroduction);
+                const lastMajorEventDate = this.convertDate(data.lastMajorEventDate);
+                const country = this.extractCountry(data.applicationTitle);
+                const isClosed = this.isCaseClosed(data.lastMajorEvent);
+                
+                // Build representative subquery (gets ID from the table)
+                const repSubquery = data.representant && data.representant.trim()
+                    ? `(SELECT id FROM representatives WHERE name='${escapeSQL(data.representant)}' LIMIT 1)`
+                    : 'NULL';
+                
+                // Application INSERT/UPDATE
+                appStatements.push(`
+                    INSERT INTO applications (
+                        application_number, application_title, country, date_introduction,
+                        representative_id, representative_name, last_major_event, last_major_event_date,
+                        is_closed, last_checked_date, not_found_count, updated_at
+                    ) VALUES (
+                        '${data.applicationNumber}',
+                        '${escapeSQL(data.applicationTitle)}',
+                        ${country ? `'${escapeSQL(country)}'` : 'NULL'},
+                        '${dateIntroduction}',
+                        ${repSubquery},
+                        ${data.representant ? `'${escapeSQL(data.representant)}'` : 'NULL'},
+                        ${data.lastMajorEvent ? `'${escapeSQL(data.lastMajorEvent)}'` : 'NULL'},
+                        ${lastMajorEventDate ? `'${lastMajorEventDate}'` : 'NULL'},
+                        ${isClosed ? 1 : 0},
+                        DATE('now'),
+                        0,
+                        CURRENT_TIMESTAMP
+                    )
+                    ON CONFLICT(application_number) DO UPDATE SET
+                        application_title = excluded.application_title,
+                        country = excluded.country,
+                        date_introduction = excluded.date_introduction,
+                        representative_id = excluded.representative_id,
+                        representative_name = excluded.representative_name,
+                        last_major_event = excluded.last_major_event,
+                        last_major_event_date = excluded.last_major_event_date,
+                        is_closed = excluded.is_closed,
+                        last_checked_date = DATE('now'),
+                        not_found_count = 0,
+                        updated_at = CURRENT_TIMESTAMP;`);
+                
+                // Delete old events for this case
+                eventStatements.push(
+                    `DELETE FROM events WHERE application_id = (SELECT id FROM applications WHERE application_number = '${data.applicationNumber}');`
+                );
+                
+                // Insert new events
+                if (data.majorEventsList && data.majorEventsList.length > 0) {
+                    const eventValues = data.majorEventsList.map((event, i) => {
+                        const eventDate = this.convertDate(event.eventDate);
+                        const isLastEvent = (i === data.majorEventsList.length - 1) ? 1 : 0;
+                        return `((SELECT id FROM applications WHERE application_number = '${data.applicationNumber}'), '${eventDate}', '${escapeSQL(event.description)}', ${isLastEvent})`;
+                    }).join(',\n        ');
+                    
+                    eventStatements.push(
+                        `INSERT INTO events (application_id, event_date, description, is_last_event) VALUES\n        ${eventValues};`
+                    );
+                }
+                
+            } catch (error) {
+                log(`   ⚠️  Skipping case ${data.applicationNumber} in batch: ${error.message}`, true);
+            }
+        }
+        
+        // 3. Combine all SQL statements
+        sqlStatements.push(...appStatements);
+        sqlStatements.push(...eventStatements);
+        
+        log(`   📝 Built SQL batch: ${uniqueReps.length} reps, ${casesData.length} cases, ${eventStatements.length/2} event sets`, true);
+        
+        return sqlStatements.join('\n');
     }
 
 	/**
